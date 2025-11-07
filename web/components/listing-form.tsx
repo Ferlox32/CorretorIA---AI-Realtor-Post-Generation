@@ -89,7 +89,7 @@ export function ListingForm() {
   const [dragging, setDragging] = React.useState(false);
   const [showPortraitDialog, setShowPortraitDialog] = React.useState(false);
   const [showSummary, setShowSummary] = React.useState(false);
-  const [selectedPortraitId, setSelectedPortraitId] = React.useState<number | null>(null);
+  const [selectedPortraitId, setSelectedPortraitId] = React.useState<string | number | null>(null);
   const [isGenerating, setIsGenerating] = React.useState(false);
   const [generateError, setGenerateError] = React.useState<string | null>(null);
   const [showResultDialog, setShowResultDialog] = React.useState(false);
