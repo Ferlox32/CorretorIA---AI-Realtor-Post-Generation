@@ -546,7 +546,8 @@ export function ListingForm() {
             ) : (
               <>
                 <Button variant="secondary" className="w-full sm:w-auto" onClick={() => setShowSummary(false)} disabled={isGenerating}>Voltar</Button>
-                <Button className="w-full sm:w-auto" type="button" disabled={isGenerating} onClick={async () => {
+                <Button className="w-full sm:w-auto" type="button" disabled={isGenerating} onClick={() => {
+                  void (async () => {
                   if (!photo || !selectedPortraitId) return;
                   setIsGenerating(true);
                   setGenerateError(null);
@@ -775,6 +776,7 @@ export function ListingForm() {
                   } finally {
                     setIsGenerating(false);
                   }
+                  })();
                 }}>
                   {isGenerating ? (
                     <>
@@ -857,9 +859,10 @@ export function ListingForm() {
                       <Button
                         variant="secondary"
                         size="sm"
-                        onClick={async () => {
-                          try {
-                            setCopyImageSuccess(false);
+                        onClick={() => {
+                          void (async () => {
+                            try {
+                              setCopyImageSuccess(false);
                             // Create a canvas to combine image + gradient + text
                             const img = new Image();
                             img.crossOrigin = "anonymous";
@@ -932,9 +935,10 @@ export function ListingForm() {
                                 setTimeout(() => setCopyImageSuccess(false), 2000);
                               }
                             }, "image/png");
-                          } catch (err) {
-                            console.error("Failed to copy image:", err);
-                          }
+                            } catch (err) {
+                              console.error("Failed to copy image:", err);
+                            }
+                          })();
                         }}
                         className="flex items-center justify-center shadow-lg flex-shrink-0 w-9 h-9 p-0"
                         title="Copiar imagem"
@@ -959,14 +963,16 @@ export function ListingForm() {
                       <Button
                         variant="secondary"
                         size="sm"
-                        onClick={async () => {
-                          try {
-                            await navigator.clipboard.writeText(generatedListing.caption);
-                            setCopyTextSuccess(true);
-                            setTimeout(() => setCopyTextSuccess(false), 2000);
-                          } catch (err) {
-                            console.error("Failed to copy text:", err);
-                          }
+                        onClick={() => {
+                          void (async () => {
+                            try {
+                              await navigator.clipboard.writeText(generatedListing.caption);
+                              setCopyTextSuccess(true);
+                              setTimeout(() => setCopyTextSuccess(false), 2000);
+                            } catch (err) {
+                              console.error("Failed to copy text:", err);
+                            }
+                          })();
                         }}
                         className="flex items-center justify-center shadow-lg flex-shrink-0 w-9 h-9 p-0"
                         title="Copiar texto"

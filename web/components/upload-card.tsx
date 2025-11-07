@@ -132,7 +132,7 @@ export function UploadCard() {
               setIsDragging(true);
             }}
             onDragLeave={() => setIsDragging(false)}
-            onDrop={onDrop}
+            onDrop={(e) => void onDrop(e)}
             className={
               "flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed px-6 py-10 transition-all cursor-pointer select-none " +
               (isDragging ? "border-primary bg-primary/5 shadow-sm" : "border-muted/60 bg-muted/10 hover:bg-muted/20 hover:shadow-sm")
@@ -144,7 +144,7 @@ export function UploadCard() {
               <span className="mx-1">ou</span>
               <span className="text-foreground underline underline-offset-4">navegue</span>
             </div>
-            <Input id="file" type="file" accept="image/png,image/jpeg" className="hidden" onChange={onInputChange} disabled={isLoading} />
+            <Input id="file" type="file" accept="image/png,image/jpeg" className="hidden" onChange={(e) => void onInputChange(e)} disabled={isLoading} />
           </label>
         </div>
 
@@ -168,7 +168,7 @@ export function UploadCard() {
             </div>
           </div>
           <div className="flex flex-col gap-4">
-            <Button size="lg" className="w-full" disabled={!hasValidFile || isLoading} onClick={onGenerate}>
+            <Button size="lg" className="w-full" disabled={!hasValidFile || isLoading} onClick={() => void onGenerate()}>
               {isLoading ? (
                 <>
                   <svg className="mr-2 h-4 w-4 animate-spin" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>
@@ -210,29 +210,31 @@ export function UploadCard() {
             setShowResultDialog(false);
             setShowFeedbackDialog(true);
           }}>No</Button>
-          <Button className="w-full sm:w-auto" onClick={async () => {
-            if (resultImageUrl) {
-              // Convert blob URL to data URL for persistent storage
-              let urlToStore = resultImageUrl;
-              if (resultImageUrl.startsWith("blob:") || resultImageUrl.startsWith("http://localhost") || resultImageUrl.startsWith("http://127.0.0.1")) {
-                try {
-                  const response = await fetch(resultImageUrl);
-                  const blob = await response.blob();
-                  const reader = new FileReader();
-                  urlToStore = await new Promise<string>((resolve, reject) => {
-                    reader.onload = () => resolve(reader.result as string);
-                    reader.onerror = reject;
-                    reader.readAsDataURL(blob);
-                  });
-                } catch (err) {
-                  console.error("Failed to convert blob to data URL:", err);
+          <Button className="w-full sm:w-auto" onClick={() => {
+            void (async () => {
+              if (resultImageUrl) {
+                // Convert blob URL to data URL for persistent storage
+                let urlToStore = resultImageUrl;
+                if (resultImageUrl.startsWith("blob:") || resultImageUrl.startsWith("http://localhost") || resultImageUrl.startsWith("http://127.0.0.1")) {
+                  try {
+                    const response = await fetch(resultImageUrl);
+                    const blob = await response.blob();
+                    const reader = new FileReader();
+                    urlToStore = await new Promise<string>((resolve, reject) => {
+                      reader.onload = () => resolve(reader.result as string);
+                      reader.onerror = reject;
+                      reader.readAsDataURL(blob);
+                    });
+                  } catch (err) {
+                    console.error("Failed to convert blob to data URL:", err);
+                  }
                 }
+                // Save the generated portrait to storage
+                savePortrait(urlToStore);
               }
-              // Save the generated portrait to storage
-              savePortrait(urlToStore);
-            }
-            setShowResultDialog(false);
-            setShowNextStepsDialog(true);
+              setShowResultDialog(false);
+              setShowNextStepsDialog(true);
+            })();
           }}>Yes</Button>
         </DialogFooter>
       </DialogContent>
@@ -257,9 +259,9 @@ export function UploadCard() {
         </div>
         <DialogFooter className="flex-col-reverse gap-3 sm:flex-row sm:gap-3">
           <Button className="w-full sm:w-auto" variant="secondary" onClick={() => setShowFeedbackDialog(false)}>Enviar feedback</Button>
-          <Button className="w-full sm:w-auto" onClick={async () => {
+          <Button className="w-full sm:w-auto" onClick={() => {
             setShowFeedbackDialog(false);
-            await onGenerate(feedback || undefined);
+            void onGenerate(feedback || undefined);
           }}>Enviar e tentar novamente</Button>
         </DialogFooter>
       </DialogContent>
