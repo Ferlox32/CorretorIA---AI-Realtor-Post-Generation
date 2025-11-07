@@ -17,10 +17,11 @@ services:
       # Basic auth credentials (can be overridden via .env file)
       - N8N_BASIC_USER=${N8N_BASIC_USER:-generation}
       - N8N_BASIC_PASS=${N8N_BASIC_PASS:-x@nd31Z03}
-    volumes:
-      # Mount source code for development (optional - remove for production)
-      - ./web:/app
-      - /app/node_modules
-      - /app/.next
+    # Volumes removed for production - they override the built files
+    # Uncomment below for development only:
+    # volumes:
+    #   - ./web:/app
+    #   - /app/node_modules
+    #   - /app/.next
     restart: unless-stopped
 

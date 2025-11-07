@@ -46,5 +46,6 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
+# The server.js is in the standalone directory
 CMD ["node", "server.js"]
 
