@@ -1,0 +1,20 @@
+# dependências
+node_modules/
+.pnpm-store/
+web/node_modules/
+
+# builds e caches
+.next/
+dist/
+out/
+coverage/
+.cache/
+.vscode/
+.DS_Store
+
+# env
+.env*
+!.env.example
+
+# docker
+*.log
